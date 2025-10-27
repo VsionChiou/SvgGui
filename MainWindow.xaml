@@ -1,0 +1,124 @@
+﻿<Window x:Class="SvgGui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SvgGui"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+        mc:Ignorable="d" WindowState="Maximized" Loaded="MainWindow_OnLoaded"
+        Title="三图层同步" Height="700" Width="1000">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Name="TopAreaGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="多图层显示" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontWeight="Bold" FontSize="30" Margin="10 5"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10">
+                <Button Name="Layer1Btn" Content="背景层" Background="Red" Margin="5 0" Click="Layer1_Click"/>
+                <Button Name="Layer2Btn" Content="图标层" Background="Red" Margin="5 0" Click="Layer2_Click"/>
+                <Button Name="Layer3Btn" Content="状态层" Background="Red" Margin="5 0" Click="Layer3_Click"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10 0">
+                <CheckBox Content="编辑模式" IsChecked="{Binding IsEditMode}"/>
+            </StackPanel>
+        </Grid>
+        <Grid DockPanel.Dock="Right">
+            <StackPanel Orientation="Vertical">
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="AlertBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/alarm.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="警示灯" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="PlugBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/bolt-one.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="监控主机" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="ChargingTreasureBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/charging-treasure.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="电源" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="DeskLampBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/desk-lamp.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="台灯" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="LampBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/lamp.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="双头灯" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Width="60" Height="60" Background="White" Margin="0 2 5 2"
+                        Click="StackLightBtn_Click">
+                    <StackPanel Orientation="Vertical">
+                        <svgc:SvgViewbox
+                            Source="pack://application:,,,/Resources/Icons/stack-light.svg"
+                            Width="38" Height="38" />
+                        <TextBlock Text="堆栈灯" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <Button Content="加载背景图" Click="SelectButton_Click"/>
+            </StackPanel>
+        </Grid>
+        <Grid Name="MainGrid" MouseWheel="SvgBorderMouse_Wheel"
+              MouseDown="Canvas_MouseDown"
+              MouseMove="Canvas_MouseMove"
+              MouseUp="Canvas_MouseUp"
+              ClipToBounds="True">
+            <Canvas Name="MainCanvas" Width="{Binding ElementName=MainGrid,Path=ActualWidth}"
+                    Height="{Binding ElementName=MainGrid,Path=ActualHeight}">
+                <Canvas.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="MainScale" ScaleX="1" ScaleY="1"/>
+                        <TranslateTransform x:Name="MainTranslate"/>
+                    </TransformGroup>
+                </Canvas.RenderTransform>
+                
+                <Canvas ZIndex="0" Name="Canvas1" Width="{Binding ElementName=MainGrid,Path=ActualWidth}"
+                        Height="{Binding ElementName=MainGrid,Path=ActualHeight}">
+                     <svgc:SvgViewbox Name="SvgViewbox" Source="pack://application:,,,/SvgGui;component/Resources/Background/svgbg.svg" 
+                                      Stretch="Uniform">
+                     </svgc:SvgViewbox>
+                </Canvas>
+                <Canvas ZIndex="1" Name="Canvas2" Width="{Binding ElementName=MainGrid,Path=ActualWidth}"
+                        Height="{Binding ElementName=MainGrid,Path=ActualHeight}">
+                    <!-- 游离态 -->
+                    <svgc:SvgViewbox x:Name="FreeStyleSvgViewbox" Visibility="Collapsed"
+                                     Source="{Binding SourceUri}" Width="12" Height="12"
+                                     Stretch="Uniform" Opacity="0.7"/>
+                </Canvas>
+                <Canvas ZIndex="2" Name="Canvas3">
+                    
+                </Canvas>
+            </Canvas>
+        </Grid>
+    </DockPanel>
+</Window>
